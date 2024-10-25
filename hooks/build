@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+docker build \
+  --file=Dockerfile \
+  --rm \
+  --compress \
+  --tag=${DOCKER_NAME_SPACE}/forgejo-runner:${CONTAINER_VERSION} \
+  .
