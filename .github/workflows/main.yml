@@ -81,9 +81,12 @@ jobs:
           buildkitd-flags: --debug
 
       - name: Build and push
-        uses: docker/bake-action@v5
+        uses: docker/build-push-action@v6
         with:
+          context: .
+          tags: bodsch/forgejo-builder:latest
           push: true
+
 
       # - name: Build Docker image
       #   run: |
