@@ -64,38 +64,52 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+      #- name: Set up QEMU
+      #  uses: docker/setup-qemu-action@v3.2.0
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v3.7.1
+        with:
+          buildkitd-flags: --debug
 
-      - name: Build Docker image
-        run: |
-          docker buildx build \
-            --file=Dockerfile \
-            --tag=bodsch/forgejo-runner:latest \
-            .
+      - name: Build and push
+        uses: docker/bake-action@v5
+        with:
+          push: true
 
-      - name: Push Docker image to Github Docker registry
-        run: |
-          # Login on Github Docker registry before pushing
-          echo "${{ secrets.GH_DOCKER_REGISTRY_TOKEN }}" | docker login ghcr.io -u bodsch --password-stdin
-
-          # Pushing image to Github Docker registry
-          docker tag \
-            bodsch/forgejo-runner:latest \
-            ghcr.io/bodsch/forgejo-runner/forgejo-runner:latest
-          docker push \
-            ghcr.io/bodsch/forgejo-runner/forgejo-runner:latest
-
-      - name: Push Docker image to Docker Hub
-        run: |
-          # Login on dockerhub.io before pushing
-          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
-          # Pushing image to dockerhub
-          docker push \
-            bodsch/forgejo-runner:latest
+      # - name: Build Docker image
+      #   run: |
+      #     docker buildx build \
+      #       --file=Dockerfile \
+      #       --push \
+      #       --tag=bodsch/forgejo-runner:latest \
+      #       .
+      #
+      # - name: Push Docker image to Github Docker registry
+      #   run: |
+      #     # Login on Github Docker registry before pushing
+      #     echo "${{ secrets.GH_DOCKER_REGISTRY_TOKEN }}" | docker login ghcr.io -u bodsch --password-stdin
+      #
+      #     # Pushing image to Github Docker registry
+      #     docker tag \
+      #       bodsch/forgejo-runner:latest \
+      #       ghcr.io/bodsch/forgejo-runner/forgejo-runner:latest
+      #     docker push \
+      #       ghcr.io/bodsch/forgejo-runner/forgejo-runner:latest
+      #
+      # - name: Push Docker image to Docker Hub
+      #   run: |
+      #     # Login on dockerhub.io before pushing
+      #     echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      #
+      #     # Pushing image to dockerhub
+      #     docker push \
+      #       bodsch/forgejo-runner:latest
