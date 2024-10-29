@@ -22,3 +22,4 @@ Installed packages:
 - docker-compose
 - podman
 - buildah
+- nodejs

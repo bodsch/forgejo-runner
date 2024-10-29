@@ -51,7 +51,8 @@ RUN \
       docker-buildx \
       docker-compose \
       podman \
-      buildah
+      buildah \
+      nodejs
 
 RUN \
   sed -i -e 's/\(driver.*=\).*/\1 "vfs"/g' /etc/containers/storage.conf && \
